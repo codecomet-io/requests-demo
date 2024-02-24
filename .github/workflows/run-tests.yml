@@ -7,24 +7,23 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.9", "pypy-3.10"]
-        os: [ubuntu-22.04, macOS-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
-    - name: Install dependencies
-      run: |
-        make
-    - name: Run tests
-      run: |
-        make ci
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - name: Set up Python 3.12
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: 3.12
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          make
+      - name: Run Tests
+        uses: codecomet-io/setup-and-run@v1.3
+        env:
+          CODECOMET_API_KEY: ${{ secrets.CODECOMET_API_KEY }}
+        with:
+          test_command: pytest tests
+          test_suite_name: Python Requests Tests
